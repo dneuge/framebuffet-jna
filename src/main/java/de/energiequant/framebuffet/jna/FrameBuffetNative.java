@@ -37,6 +37,10 @@ public interface FrameBuffetNative extends Library {
 
     int framebuffet_has_update(Pointer source_instance, int buffer_id, int last_token);
 
+    int framebuffet_wait_for_update(Pointer source_instance, int buffer_id, int last_token);
+
+    int framebuffet_wait_for_update_micros(Pointer source_instance, int buffer_id, int last_token, long microseconds);
+
     Pointer fbcollections_map_create();
 
     int fbcollections_map_put(Pointer entry, PointerByReference old_entry, Pointer key, long key_size, Pointer value,
@@ -47,18 +51,14 @@ public interface FrameBuffetNative extends Library {
 
     void fbcollections_map_free_map_and_payloads(Pointer entry);
 
+    // @formatter:off
     // not bound yet:
-    // int framebuffet_register_module(framebuffet_t *framebuffet,
-    // fbsource_module_descriptor_t module_descriptor);
+    // int framebuffet_register_module(framebuffet_t *framebuffet, fbsource_module_descriptor_t module_descriptor);
+    // fbsource_module_instance_entry_t* framebuffet_get_source_instance(framebuffet_t* framebuffet, char *instance_name);
     //
-    // fbcollections_map_entry_t*
-    // fbcollections_map_copy_with_payloads(fbcollections_map_entry_t *entry);
-    // fbcollections_map_entry_t*
-    // fbcollections_map_find_key(fbcollections_map_entry_t *entry, void *key,
-    // unsigned long key_size);
-    // int fbcollections_map_put(fbcollections_map_entry_t *entry,
-    // fbcollections_map_entry_t **old_entry, void *key, unsigned long key_size,
-    // void *value, unsigned long value_size);
-    // void fbcollections_map_free_entry_and_payloads(fbcollections_map_entry_t
-    // *entry);
+    // fbcollections_map_entry_t* fbcollections_map_copy_with_payloads(fbcollections_map_entry_t *entry);
+    // fbcollections_map_entry_t* fbcollections_map_find_key(fbcollections_map_entry_t *entry, void *key, unsigned long key_size);
+    // int fbcollections_map_put(fbcollections_map_entry_t *entry, fbcollections_map_entry_t **old_entry, void *key, unsigned long key_size, void *value, unsigned long value_size);
+    // void fbcollections_map_free_entry_and_payloads(fbcollections_map_entry_t *entry);
+    // @formatter:on
 }

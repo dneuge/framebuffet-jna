@@ -2,6 +2,7 @@ package de.energiequant.framebuffet.jna;
 
 import java.io.Closeable;
 import java.io.File;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -163,6 +164,36 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     boolean hasUpdate(Source source, int bufferId, int lastToken) {
         return lib.framebuffet_has_update(source.instance, bufferId, lastToken) != 0;
+    }
+
+    boolean waitForUpdate(Source source, int bufferId, int lastToken) {
+        int result = lib.framebuffet_wait_for_update(source.instance, bufferId, lastToken);
+
+        return convertWaitForUpdateResult(result);
+    }
+
+    boolean waitForUpdate(Source source, int bufferId, int lastToken, Duration timeout) {
+        int result = lib.framebuffet_wait_for_update_micros(source.instance, bufferId, lastToken,
+                timeout.toMillis() * 1000);
+
+        return convertWaitForUpdateResult(result);
+    }
+
+    private boolean convertWaitForUpdateResult(int result) {
+        FrameBuffetError error = FrameBuffetError.resolve(result);
+
+        // @formatter:off
+        switch (error) {
+            case NONE:
+                return true;
+    
+            case NO_FRAME:
+                return false;
+    
+            default:
+                throw new ModuleFailed("Failed waiting for an update from source", error);
+        }
+        // @formatter:on
     }
 
     /**

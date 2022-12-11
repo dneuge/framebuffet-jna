@@ -1,5 +1,6 @@
 package de.energiequant.framebuffet.jna;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 
@@ -139,5 +140,59 @@ public class Source {
      */
     public boolean hasUpdate(int bufferId, int lastToken) {
         return fb.hasUpdate(this, bufferId, lastToken);
+    }
+
+    /**
+     * Waits indefinitely until an updated frame is available for the given buffer.
+     * 
+     * <p>
+     * Tokens are returned from {@link #copyLatestFrame(byte[], int)} and have no
+     * specified meaning.
+     * </p>
+     * 
+     * <p>
+     * Note that modules are not required to support token-based update checks. This
+     * call may block "forever" in such cases.
+     * </p>
+     * 
+     * <p>
+     * Waiting can only be interrupted by the framework. You probably want to
+     * specify a timeout to unblock the calling thread at some point, see
+     * {@link #waitForUpdate(int, int, Duration)}.
+     * </p>
+     * 
+     * @param bufferId  zero-based index of the buffer to check
+     * @param lastToken token received from last
+     *                  {@link #copyLatestFrame(byte[], int)} call
+     * @return <code>false</code> if the buffer does not have an updated image ready
+     *         for copy, otherwise <code>true</code>
+     */
+    public boolean waitForUpdate(int bufferId, int lastToken) {
+        return fb.waitForUpdate(this, bufferId, lastToken);
+    }
+
+    /**
+     * Waits until an updated frame is available for the given buffer or the timeout
+     * has expired.
+     * 
+     * <p>
+     * Tokens are returned from {@link #copyLatestFrame(byte[], int)} and have no
+     * specified meaning.
+     * </p>
+     * 
+     * <p>
+     * Note that modules are not required to support token-based update checks. This
+     * call will just timeout in that case.
+     * </p>
+     * 
+     * @param bufferId  zero-based index of the buffer to check
+     * @param lastToken token received from last
+     *                  {@link #copyLatestFrame(byte[], int)} call
+     * @param timeout   maximum time to block the calling thread
+     * @return <code>false</code> if the buffer does not have an updated image ready
+     *         for copy, otherwise <code>true</code>
+     */
+    public boolean waitForUpdate(int bufferId, int lastToken, Duration timeout) {
+        return fb.waitForUpdate(this, bufferId, lastToken, timeout);
     }
 }
