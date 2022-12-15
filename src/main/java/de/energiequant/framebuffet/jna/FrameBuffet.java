@@ -163,6 +163,22 @@ public class FrameBuffet implements Closeable, AutoCloseable {
         return new Source(this, sourceInstanceRef);
     }
 
+    /**
+     * Retrieves the source module previously registered under the given name.
+     * 
+     * @param instanceName name of the instance to be retrieved
+     * @return the framebuffer source instance, empty if not found
+     */
+    public Optional<Source> getSource(String instanceName) {
+        Pointer sourceInstanceRef = lib.framebuffet_get_source_instance(instance, instanceName);
+
+        if (sourceInstanceRef == null) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new Source(this, sourceInstanceRef));
+    }
+
     @Override
     public void close() {
         if (instance == null) {

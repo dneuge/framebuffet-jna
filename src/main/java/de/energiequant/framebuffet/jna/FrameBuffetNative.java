@@ -35,6 +35,8 @@ public interface FrameBuffetNative extends Library {
 
     int framebuffet_configure_source_instance(Pointer source_instance, Pointer config);
 
+    Pointer framebuffet_get_source_instance(Pointer framebuffet, String instance_name);
+
     int framebuffet_get_source_configuration(Pointer source_instance, PointerByReference config);
 
     int framebuffet_get_num_buffers(Pointer source_instance);
@@ -63,7 +65,6 @@ public interface FrameBuffetNative extends Library {
     // @formatter:off
     // not bound yet:
     // int framebuffet_register_module(framebuffet_t *framebuffet, fbsource_module_descriptor_t module_descriptor);
-    // fbsource_module_instance_entry_t* framebuffet_get_source_instance(framebuffet_t* framebuffet, char *instance_name);
     //
     // fbcollections_map_entry_t* fbcollections_map_copy_with_payloads(fbcollections_map_entry_t *entry);
     // fbcollections_map_entry_t* fbcollections_map_find_key(fbcollections_map_entry_t *entry, void *key, unsigned long key_size);
