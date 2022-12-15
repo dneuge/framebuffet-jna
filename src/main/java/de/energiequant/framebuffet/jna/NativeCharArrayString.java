@@ -11,13 +11,24 @@ class NativeCharArrayString {
     Pointer pointer;
     long size;
 
+    private final static long DYNAMIC = -1;
+
     private NativeCharArrayString() {
         // nothing to do
+    }
+
+    NativeCharArrayString(Pointer pointer) {
+        this.pointer = pointer;
+        this.size = DYNAMIC;
     }
 
     NativeCharArrayString(Pointer pointer, long size) {
         this.pointer = pointer;
         this.size = size;
+
+        if (size < 0) {
+            throw new IllegalArgumentException("size must be positive or zero");
+        }
     }
 
     /**
@@ -32,11 +43,15 @@ class NativeCharArrayString {
             return null;
         }
 
-        if (size == 0) {
+        // size was either predefined or needs to be determined dynamically by searching
+        // null-termination
+        long currentSize = (size != DYNAMIC) ? size : strlen(pointer);
+
+        if (currentSize == 0) {
             return "";
         }
 
-        byte[] arr = pointer.getByteArray(0L, (int) size);
+        byte[] arr = pointer.getByteArray(0L, (int) currentSize);
 
         // locate optional null termination
         int endExcl = arr.length;
@@ -80,5 +95,19 @@ class NativeCharArrayString {
         out.pointer.setByte(bytes.length, (byte) 0);
 
         return out;
+    }
+
+    /**
+     * @param pointer pointer to start searching from
+     * @return number of characters until first null byte, exclusive
+     */
+    private static long strlen(Pointer pointer) {
+        long currentSize = 0;
+
+        while (pointer.getByte(currentSize) != 0) {
+            currentSize++;
+        }
+
+        return currentSize;
     }
 }

@@ -6,11 +6,14 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import de.energiequant.framebuffet.jna.FrameBuffetNative.LogReceiverNative;
 
 /**
  * Higher-level bindings for Frame Buffet library access.
@@ -23,6 +26,14 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     private Pointer instance;
 
     /**
+     * The log receiver currently registered with the framework instance. This
+     * reference must be kept for the duration of the framework instance's existence
+     * to avoid garbage collection of the callback provided to the framework.
+     */
+    @SuppressWarnings("unused")
+    private FrameBuffetNative.LogReceiverNative providedLibLogReceiver;
+
+    /**
      * Creates a new instance of the framework.
      * 
      * @throws InstantiationFailed if the framework failed to initialize
@@ -31,6 +42,81 @@ public class FrameBuffet implements Closeable, AutoCloseable {
         instance = lib.framebuffet_init();
         if (instance == null) {
             throw new InstantiationFailed("Framework could not be initialized");
+        }
+    }
+
+    /**
+     * Sets the log receiver callback to be used by this framework instance.
+     * 
+     * <p>
+     * The receiver should be provided as early as possible as the framework does
+     * not perform any logging without a callback. Also remember to set the desired
+     * log level {@link #setMinimumLogLevel(FrameBuffetLogLevel)}.
+     * </p>
+     * 
+     * <p>
+     * If you are not receiving expected messages, check if framework and modules
+     * were actually compiled with the wanted log level enabled. For performance
+     * reasons, generally unwanted log levels (such as
+     * {@link FrameBuffetLogLevel#DEBUG} or {@link FrameBuffetLogLevel#TRACE}) may
+     * already be filtered out at compile-time unless configured otherwise. The
+     * runtime log level is only an additional filter for the messages that were not
+     * already optimized away.
+     * </p>
+     * 
+     * @param logReceiver will be called for every message not already filtered out
+     *                    by the framework
+     * @see #setMinimumLogLevel(FrameBuffetLogLevel)
+     */
+    public void provideLogReceiver(BiConsumer<FrameBuffetLogLevel, String> logReceiver) {
+        LogReceiverNative libLogReceiver = new FrameBuffetNative.LogReceiverNative() {
+            @Override
+            public void invoke(byte logLevel, Pointer message) {
+                String javaMessage = new NativeCharArrayString(message).asJavaString();
+
+                FrameBuffetLogLevel javaLogLevel = null;
+                try {
+                    javaLogLevel = FrameBuffetLogLevel.resolve(logLevel);
+                } catch (IllegalArgumentException ex) {
+                    // TODO: log internally?
+                }
+
+                try {
+                    logReceiver.accept(javaLogLevel, javaMessage);
+                } catch (Exception ex) {
+                    // TODO: log internally?
+                }
+            }
+        };
+
+        lib.framebuffet_provide_log_receiver(instance, libLogReceiver);
+        providedLibLogReceiver = libLogReceiver;
+    }
+
+    /**
+     * Sets the minimum log message level required to call the log receiver (see
+     * {@link #provideLogReceiver(BiConsumer)}).
+     * 
+     * <p>
+     * If you are not receiving expected messages, check if framework and modules
+     * were actually compiled with the wanted log level enabled. For performance
+     * reasons, generally unwanted log levels (such as
+     * {@link FrameBuffetLogLevel#DEBUG} or {@link FrameBuffetLogLevel#TRACE}) may
+     * already be filtered out at compile-time unless configured otherwise. The
+     * runtime log level is only an additional filter for the messages that were not
+     * already optimized away.
+     * </p>
+     * 
+     * @param logLevel least severe log level to request log output for
+     * @see #provideLogReceiver(BiConsumer)
+     */
+    public void setMinimumLogLevel(FrameBuffetLogLevel logLevel) {
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_set_minimum_log_level(instance, logLevel.getNativeValue()) //
+        );
+
+        if (error != FrameBuffetError.NONE) {
+            throw new ConfigurationFailed("Failed to set minimum log level to " + logLevel, error);
         }
     }
 
@@ -305,6 +391,15 @@ public class FrameBuffet implements Closeable, AutoCloseable {
         }
 
         private InstantiationFailed(String msg, FrameBuffetError error) {
+            super(msg, error);
+        }
+    }
+
+    /**
+     * Thrown if framework configuration fails.
+     */
+    public static class ConfigurationFailed extends FrameBuffetException {
+        private ConfigurationFailed(String msg, FrameBuffetError error) {
             super(msg, error);
         }
     }

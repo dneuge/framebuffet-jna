@@ -1,5 +1,6 @@
 package de.energiequant.framebuffet.jna;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -13,11 +14,19 @@ import com.sun.jna.ptr.PointerByReference;
  * </p>
  */
 public interface FrameBuffetNative extends Library {
+    public static interface LogReceiverNative extends Callback {
+        void invoke(byte logLevel, Pointer message);
+    }
+
     FrameBuffetNative INSTANCE = (FrameBuffetNative) Native.load("framebuffet", FrameBuffetNative.class);
 
     Pointer framebuffet_init();
 
     int framebuffet_destroy(Pointer framebuffet);
+
+    void framebuffet_provide_log_receiver(Pointer framebuffet, LogReceiverNative log_receiver);
+
+    int framebuffet_set_minimum_log_level(Pointer framebuffet, byte level);
 
     int framebuffet_load_module(Pointer framebuffet, String file_path);
 
