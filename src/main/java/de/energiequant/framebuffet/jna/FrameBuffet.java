@@ -219,6 +219,72 @@ public class FrameBuffet implements Closeable, AutoCloseable {
         return map;
     }
 
+    /**
+     * Stores the given configuration under the specified name. If a configuration
+     * had already been filed under the same name, it will be replaced by the new
+     * configuration.
+     * 
+     * <p>
+     * Note that this is used for general configurations (usually templates).
+     * Sources use their own configurations, set up via
+     * {@link Source#configure(Map)}.
+     * </p>
+     * 
+     * @param name   name to store the configuration under
+     * @param config the configuration to be stored
+     */
+    public void setConfiguration(String name, Map<String, String> config) {
+        Pointer libConfig = mapToLib(config).orElseThrow( //
+                () -> new IllegalArgumentException(
+                        "Map for \"" + name + "\" could not be converted to FrameBuffet collection") //
+        );
+
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_set_configuration(instance, name, libConfig) //
+        );
+
+        lib.fbcollections_map_free_map_and_payloads(libConfig);
+
+        if (error != FrameBuffetError.NONE) {
+            throw new ModuleFailed("Failed to store configuration \"" + name + "\"", error);
+        }
+    }
+
+    /**
+     * Retrieves the configuration stored under the given name.
+     * 
+     * <p>
+     * Note that this is used for general configurations (usually templates).
+     * Sources use their own configurations, available via
+     * {@link Source#getSourceConfiguration()}. Buffer configurations are retrieved
+     * via {@link Source#getBufferConfiguration(int)}.
+     * </p>
+     * 
+     * @param name name of the stored configuration
+     * @return copy of the configuration registered to this framework instance;
+     *         empty if not registered
+     */
+    public Optional<Map<String, String>> getConfiguration(String name) {
+        PointerByReference configRef = new PointerByReference();
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_get_configuration(instance, name, configRef) //
+        );
+
+        if (error != FrameBuffetError.NONE) {
+            throw new ModuleFailed("Failed to get configuration \"" + name + "\" from framework", error);
+        }
+
+        if (configRef.getValue() == null) {
+            return Optional.empty();
+        }
+
+        Map<String, String> map = mapFromLib(configRef.getValue());
+
+        lib.fbcollections_map_free_map_and_payloads(configRef.getValue());
+
+        return Optional.of(map);
+    }
+
     void configureSource(Source source, Map<String, String> config) {
         Pointer libConfig = mapToLib(config).orElseThrow( //
                 () -> new IllegalArgumentException("Map could not be converted to FrameBuffet collection") //

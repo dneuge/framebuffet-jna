@@ -30,6 +30,10 @@ public interface FrameBuffetNative extends Library {
 
     int framebuffet_load_module(Pointer framebuffet, String file_path);
 
+    int framebuffet_set_configuration(Pointer framebuffet, String config_name, Pointer config);
+
+    int framebuffet_get_configuration(Pointer framebuffet, String config_name, PointerByReference config);
+
     int framebuffet_create_source_instance(Pointer framebuffet, PointerByReference source_instance, String module_name,
             String instance_name);
 
