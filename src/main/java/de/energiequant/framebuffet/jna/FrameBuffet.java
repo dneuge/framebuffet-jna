@@ -138,6 +138,57 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     /**
+     * Configures this instance by applying all actions as defined in the given
+     * JSON-encoded string.
+     * 
+     * <p>
+     * Before configuring, all required modules need to have been registered with
+     * the framework instance and logging should have been configured, if wanted.
+     * Previous configurations are extended. Create a new {@link FrameBuffet}
+     * instance to restart from scratch, if needed.
+     * </p>
+     * 
+     * @param json contents of the JSON file to apply
+     * @throws ConfigurationFailed if any of the requested actions could not be
+     *                             applied
+     */
+    public void configureFromActionsJson(String json) {
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_configure_from_actions_json(instance, json) //
+        );
+
+        if (error != FrameBuffetError.NONE) {
+            throw new ConfigurationFailed("Failed to apply actions JSON", error);
+        }
+    }
+
+    /**
+     * Configures this instance by applying all actions as defined in the given JSON
+     * file.
+     * 
+     * <p>
+     * Before configuring, all required modules need to have been registered with
+     * the framework instance and logging should have been configured, if wanted.
+     * Previous configurations are extended. Create a new {@link FrameBuffet}
+     * instance to restart from scratch, if needed.
+     * </p>
+     * 
+     * @param jsonFile the JSON file to be applied
+     * @throws ConfigurationFailed if any of the requested actions could not be
+     *                             applied
+     */
+    public void configureFromActionsJson(File jsonFile) {
+        String path = jsonFile.getAbsolutePath();
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_configure_from_actions_json_file(instance, path) //
+        );
+
+        if (error != FrameBuffetError.NONE) {
+            throw new ConfigurationFailed("Failed to apply actions from " + path, error);
+        }
+    }
+
+    /**
      * Creates a new instance of the specified module, to be registered under the
      * given name.
      * 

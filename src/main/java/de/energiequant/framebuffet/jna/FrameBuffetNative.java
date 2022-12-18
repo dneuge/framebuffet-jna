@@ -30,6 +30,10 @@ public interface FrameBuffetNative extends Library {
 
     int framebuffet_load_module(Pointer framebuffet, String file_path);
 
+    int framebuffet_configure_from_actions_json(Pointer framebuffet, String json_string);
+
+    int framebuffet_configure_from_actions_json_file(Pointer framebuffet, String file_path);
+
     int framebuffet_set_configuration(Pointer framebuffet, String config_name, Pointer config);
 
     int framebuffet_get_configuration(Pointer framebuffet, String config_name, PointerByReference config);
