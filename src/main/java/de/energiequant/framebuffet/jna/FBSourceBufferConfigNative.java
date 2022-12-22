@@ -3,7 +3,6 @@ package de.energiequant.framebuffet.jna;
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 /**
@@ -14,13 +13,16 @@ import com.sun.jna.Structure;
  * </p>
  */
 public class FBSourceBufferConfigNative extends Structure {
+    public static class ByReference extends FBSourceBufferConfigNative implements Structure.ByReference {
+        // implemented by JNA
+    }
+
     public int width;
     public int height;
     public long size;
 
-    FBSourceBufferConfigNative(Pointer pointer) {
-        super(pointer);
-        read();
+    private FBSourceBufferConfigNative() {
+        // for ByReference
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

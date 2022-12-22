@@ -49,7 +49,8 @@ public interface FrameBuffetNative extends Library {
 
     int framebuffet_get_num_buffers(Pointer source_instance);
 
-    Pointer framebuffet_get_buffer_configuration(Pointer source_instance, int buffer_id);
+    int framebuffet_get_buffer_configuration(Pointer source_instance, int buffer_id,
+            FBSourceBufferConfigNative.ByReference buffer_config);
 
     int framebuffet_copy_latest_frame(Pointer source_instance, byte[] destination, long buffer_size, int buffer_id,
             Pointer token);

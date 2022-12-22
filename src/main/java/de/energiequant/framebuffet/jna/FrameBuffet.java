@@ -353,12 +353,20 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     Optional<BufferConfiguration> getBufferConfiguration(Source source, int id) {
-        Pointer libConfig = lib.framebuffet_get_buffer_configuration(source.instance, id);
-        if (libConfig == null) {
+        FBSourceBufferConfigNative.ByReference libConfig = new FBSourceBufferConfigNative.ByReference();
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_get_buffer_configuration(source.instance, id, libConfig) //
+        );
+
+        if (error == FrameBuffetError.NO_SUCH_BUFFER) {
             return Optional.empty();
         }
 
-        return Optional.of(BufferConfiguration.consumeNative(libConfig));
+        if (error != FrameBuffetError.NONE) {
+            throw new ModuleFailed("Failed to retrieve source buffer configuration", error);
+        }
+
+        return Optional.of(new BufferConfiguration(libConfig));
     }
 
     int copyLatestFrame(Source source, byte[] destination, int bufferId) {
