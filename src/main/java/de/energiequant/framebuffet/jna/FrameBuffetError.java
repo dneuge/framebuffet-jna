@@ -37,7 +37,32 @@ public enum FrameBuffetError {
     /**
      * error code indicating memory allocation failed
      */
-    MEMORY_ALLOCATION(5);
+    MEMORY_ALLOCATION(5),
+
+    /**
+     * error code indicating a resource cannot be freed because it is still in use
+     */
+    IN_USE(6),
+
+    /**
+     * Error code indicating that a request cannot be fulfilled because destruction
+     * is pending. Check that you didn't continue to use a source instance after
+     * releasing it. This error is expected when publishing updates from a source
+     * module whose destruction is about to be triggered. If you receive this error
+     * when trying to destroy an instance this is essentially a "double-free" soft
+     * error or race condition; the source has already been marked to be destroyed.
+     */
+    DESTRUCTION_PENDING(7),
+
+    /**
+     * Error code returned framework-side from a failed call to a module's
+     * destructor. Further behaviour is unspecified (see documentation of
+     * fbsource_destroy_f) with at least a memory leak or even external side-effects
+     * that cannot be cleaned up (such as shared memory not being released). You
+     * probably want to terminate your application as soon as you see encounter this
+     * error and inform users about the issue.
+     */
+    MODULE_DESTRUCTOR_FAILED(8);
 
     private final int code;
 

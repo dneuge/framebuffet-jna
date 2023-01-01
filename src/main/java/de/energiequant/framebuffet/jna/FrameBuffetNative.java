@@ -4,6 +4,8 @@ import com.sun.jna.Callback;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -22,7 +24,11 @@ public interface FrameBuffetNative extends Library {
 
     Pointer framebuffet_init();
 
-    int framebuffet_destroy(Pointer framebuffet);
+    // NOTE: not used by wrapper in favor of "retrying" option
+    int framebuffet_destroy(Pointer framebuffet, IntByReference num_sources_destroyed);
+
+    int framebuffet_destroy_retrying(Pointer framebuffet, IntByReference num_sources_destroyed, int maximum_attempts,
+            long millis_between_attempts, ByteByReference module_destructor_failed);
 
     void framebuffet_provide_log_receiver(Pointer framebuffet, LogReceiverNative log_receiver);
 
@@ -44,6 +50,14 @@ public interface FrameBuffetNative extends Library {
     int framebuffet_configure_source_instance(Pointer source_instance, Pointer config);
 
     Pointer framebuffet_get_source_instance(Pointer framebuffet, String instance_name);
+
+    int framebuffet_release_source_instance(Pointer framebuffet, Pointer source_instance);
+
+    // TODO: add to wrapper
+    int framebuffet_destroy_source_instance(Pointer framebuffet, String instance_name);
+
+    // TODO: add to wrapper
+    int framebuffet_destroy_unused_source_instances(Pointer framebuffet, IntByReference num_destroyed);
 
     int framebuffet_get_source_configuration(Pointer source_instance, PointerByReference config);
 
@@ -79,5 +93,6 @@ public interface FrameBuffetNative extends Library {
     // fbcollections_map_entry_t* fbcollections_map_find_key(fbcollections_map_entry_t *entry, void *key, unsigned long key_size);
     // int fbcollections_map_put(fbcollections_map_entry_t *entry, fbcollections_map_entry_t **old_entry, void *key, unsigned long key_size, void *value, unsigned long value_size);
     // void fbcollections_map_free_entry_and_payloads(fbcollections_map_entry_t *entry);
+    //
     // @formatter:on
 }

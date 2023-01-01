@@ -1,5 +1,7 @@
 package de.energiequant.framebuffet.jna;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
@@ -7,14 +9,16 @@ import java.util.Optional;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
 
+import de.energiequant.framebuffet.jna.FrameBuffet.FrameBuffetException;
+import de.energiequant.framebuffet.jna.FrameBuffet.FrameBuffetIOException;
 import de.energiequant.framebuffet.jna.FrameBuffet.ModuleFailed;
 
 /**
  * An instance of a Frame Buffet source module.
  */
-public class Source {
+public class Source implements Closeable, AutoCloseable {
     private final FrameBuffet fb;
-    final Pointer instance;
+    Pointer instance;
 
     Source(FrameBuffet fb, Pointer instance) {
         this.fb = fb;
@@ -31,6 +35,7 @@ public class Source {
      * @throws ModuleFailed if unable to provide any indication
      */
     public int getNumBuffers() {
+        failIfReleased();
         return fb.getNumBuffers(this);
     }
 
@@ -53,6 +58,7 @@ public class Source {
      * @throws ModuleFailed if configuration failed
      */
     public void configure(Map<String, String> config) {
+        failIfReleased();
         fb.configureSource(this, config);
     }
 
@@ -68,6 +74,7 @@ public class Source {
      * @throws ModuleFailed if the instance failed to provide any configuration
      */
     public Map<String, String> getSourceConfiguration() {
+        failIfReleased();
         return fb.getSourceConfiguration(this);
     }
 
@@ -86,6 +93,7 @@ public class Source {
      * @return configuration of the buffer; empty if unavailable
      */
     public Optional<BufferConfiguration> getBufferConfiguration(int id) {
+        failIfReleased();
         return fb.getBufferConfiguration(this, id);
     }
 
@@ -115,6 +123,7 @@ public class Source {
      * @throws ModuleFailed if the requested copy could not be performed
      */
     public int copyLatestFrame(byte[] destination, int bufferId) {
+        failIfReleased();
         return fb.copyLatestFrame(this, destination, bufferId);
     }
 
@@ -139,6 +148,7 @@ public class Source {
      *         for copy, otherwise <code>true</code>
      */
     public boolean hasUpdate(int bufferId, int lastToken) {
+        failIfReleased();
         return fb.hasUpdate(this, bufferId, lastToken);
     }
 
@@ -168,6 +178,7 @@ public class Source {
      *         for copy, otherwise <code>true</code>
      */
     public boolean waitForUpdate(int bufferId, int lastToken) {
+        failIfReleased();
         return fb.waitForUpdate(this, bufferId, lastToken);
     }
 
@@ -193,6 +204,42 @@ public class Source {
      *         for copy, otherwise <code>true</code>
      */
     public boolean waitForUpdate(int bufferId, int lastToken, Duration timeout) {
+        failIfReleased();
         return fb.waitForUpdate(this, bufferId, lastToken, timeout);
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (instance == null) {
+            return;
+        }
+
+        try {
+            fb.releaseSourceInstance(this);
+        } catch (FrameBuffetException ex) {
+            throw FrameBuffetIOException.fromFrameBuffetException(ex);
+        }
+
+        instance = null;
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    protected void finalize() throws Throwable {
+        // TODO: find a better way that works in Java 8 as well as later versions
+        super.finalize();
+        close();
+    }
+
+    private void failIfReleased() {
+        if (instance == null) {
+            throw new SourceHasBeenReleased();
+        }
+    }
+
+    private static class SourceHasBeenReleased extends FrameBuffetException {
+        private SourceHasBeenReleased() {
+            super("This source instance has already been released on framework-side and thus cannot be accessed any longer.");
+        }
     }
 }

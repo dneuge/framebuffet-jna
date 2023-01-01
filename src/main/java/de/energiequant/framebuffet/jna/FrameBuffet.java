@@ -2,6 +2,7 @@ package de.energiequant.framebuffet.jna;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.function.BiConsumer;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -231,14 +233,34 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     @Override
-    public void close() {
+    public void close() throws IOException {
         if (instance == null) {
             return;
         }
 
-        lib.framebuffet_destroy(instance);
+        IntByReference numSourcesDestroyed = new IntByReference();
+        ByteByReference moduleDestructorFailed = new ByteByReference();
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_destroy_retrying(instance, numSourcesDestroyed, -1, -1, moduleDestructorFailed) //
+        );
 
-        instance = null;
+        if (error == FrameBuffetError.NONE) {
+            instance = null;
+        }
+
+        if (moduleDestructorFailed.getValue() != 0) {
+            throw new ModuleDestructorFailed(
+                    "At least one source instance failed deconstruction. Consequences can be memory leaks "
+                            + "or other unwanted side-effects; the application is advised to terminate "
+                            + "(note that shared memory may still not be freed).",
+                    error);
+        }
+
+        if (error != FrameBuffetError.NONE) {
+            throw new FrameBuffetIOException(
+                    "FrameBuffet instance failed to shut down; this can be caused by source instances still being held active",
+                    error);
+        }
     }
 
     @SuppressWarnings("deprecation")
@@ -406,6 +428,16 @@ public class FrameBuffet implements Closeable, AutoCloseable {
         return convertWaitForUpdateResult(result);
     }
 
+    void releaseSourceInstance(Source source) {
+        FrameBuffetError error = FrameBuffetError.resolve( //
+                lib.framebuffet_release_source_instance(instance, source.instance) //
+        );
+
+        if (error != FrameBuffetError.NONE && error != FrameBuffetError.DESTRUCTION_PENDING) {
+            throw new FrameBuffetException("Source instance could not be released", error);
+        }
+    }
+
     private boolean convertWaitForUpdateResult(int result) {
         FrameBuffetError error = FrameBuffetError.resolve(result);
 
@@ -501,14 +533,25 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     /**
+     * Implementing classes hold an optional {@link FrameBuffetError}.
+     */
+    public static interface FrameBuffetErrorHolder {
+        Optional<FrameBuffetError> getFrameBuffetError();
+    }
+
+    /**
      * Exceptions related to errors specific to the Frame Buffet framework, usually
      * holding a {@link FrameBuffetError} which may provide further indication of
      * what went wrong.
+     * <p>
+     * Note that <code>close</code> methods will throw a custom {@link IOException}
+     * instead, which still implements {@link FrameBuffetErrorHolder}.
+     * </p>
      */
-    public static class FrameBuffetException extends RuntimeException {
+    public static class FrameBuffetException extends RuntimeException implements FrameBuffetErrorHolder {
         private final FrameBuffetError error;
 
-        private FrameBuffetException(String msg) {
+        FrameBuffetException(String msg) {
             super(msg);
             this.error = null;
         }
@@ -518,8 +561,45 @@ public class FrameBuffet implements Closeable, AutoCloseable {
             this.error = error;
         }
 
-        public Optional<FrameBuffetError> getError() {
+        public Optional<FrameBuffetError> getFrameBuffetError() {
             return Optional.ofNullable(error);
+        }
+    }
+
+    static class FrameBuffetIOException extends IOException implements FrameBuffetErrorHolder {
+        private final FrameBuffetError error;
+
+        private FrameBuffetIOException(String msg) {
+            super(msg);
+            this.error = null;
+        }
+
+        private FrameBuffetIOException(String msg, Throwable cause) {
+            super(msg, cause);
+            this.error = null;
+        }
+
+        private FrameBuffetIOException(String msg, FrameBuffetError error) {
+            super(msg + " [FrameBuffet error " + error + "]");
+            this.error = error;
+        }
+
+        public Optional<FrameBuffetError> getFrameBuffetError() {
+            return Optional.ofNullable(error);
+        }
+
+        static FrameBuffetIOException fromFrameBuffetException(FrameBuffetException cause) {
+            return new FrameBuffetIOException(cause.getMessage(), cause);
+        }
+    }
+
+    public static class ModuleDestructorFailed extends FrameBuffetIOException {
+        private ModuleDestructorFailed(String msg) {
+            super(msg);
+        }
+
+        private ModuleDestructorFailed(String msg, FrameBuffetError error) {
+            super(msg, error);
         }
     }
 
