@@ -430,7 +430,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     void releaseSourceInstance(Source source) {
         FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_release_source_instance(instance, source.instance) //
+                lib.framebuffet_release_source_instance(source.instance) //
         );
 
         if (error != FrameBuffetError.NONE && error != FrameBuffetError.DESTRUCTION_PENDING) {

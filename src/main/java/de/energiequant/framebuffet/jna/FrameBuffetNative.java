@@ -51,7 +51,7 @@ public interface FrameBuffetNative extends Library {
 
     Pointer framebuffet_get_source_instance(Pointer framebuffet, String instance_name);
 
-    int framebuffet_release_source_instance(Pointer framebuffet, Pointer source_instance);
+    int framebuffet_release_source_instance(Pointer source_instance);
 
     // TODO: add to wrapper
     int framebuffet_destroy_source_instance(Pointer framebuffet, String instance_name);
