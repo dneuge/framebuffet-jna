@@ -14,7 +14,7 @@ Official repositories for these bindings are hosted on [Codeberg](https://codebe
 and [GitHub](https://github.com/dneuge/framebuffet-jna). Both locations are kept in sync and can be used to submit pull requests but issues are only tracked
 on [Codeberg](https://codeberg.org/dneuge/framebuffet-jna/issues) to gather them in a single place. Please note that this project uses
 the [same contribution guidelines as Frame Buffet](https://codeberg.org/dneuge/framebuffet/src/branch/main/CONTRIBUTING.md) itself and thus also has the same
-strict "no AI" policy [affecting all contributions](CONTRIBUTING.md) incl. issue reports.
+strict "no AI" policy affecting all contributions incl. issue reports.
 
 ## Current state
 
