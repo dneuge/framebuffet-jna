@@ -47,9 +47,7 @@ This list only mentions special points that often vary between Java projects:
     - use `DEBUG` on code that can be removed when that level of debugging is no longer required
 - as a general rule of thumb, look at existing code if unsure how to format
 
-It is recommended to use [IntelliJ IDEA](https://www.jetbrains.com/idea/)\* as an IDE, import the
-[code style included with this project](idea-code-style.xml) and enable *Reformat code* and *Optimize imports* under *Tools/Actions on Save* for
-auto-formatting. You may also want to install the "SonarQube for IDE" plugin for static
+It is recommended to use [IntelliJ IDEA](https://www.jetbrains.com/idea/)\* as an IDE. You may also want to install the "SonarQube for IDE" plugin for static
 code analysis.
 
 \*) With commercial versions of IDEA in particular: Be careful to use AI integration only in accordance to this project's [AI usage policy](AI_USAGE_POLICY.md)
