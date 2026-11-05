@@ -9,7 +9,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <url>https://github.com/dneuge/framebuffet-jna</url>
+    <url>https://codeberg.org/dneuge/framebuffet-jna</url>
 
     <licenses>
         <license>
@@ -38,9 +38,9 @@
     </dependencies>
 
     <scm>
-        <connection>scm:git:git://github.com/dneuge/framebuffet-jna.git</connection>
-        <developerConnection>scm:git:ssh://github.com:dneuge/framebuffet-jna.git</developerConnection>
-        <url>https://github.com/dneuge/framebuffet-jna</url>
+        <connection>scm:git:https://codeberg.org/dneuge/framebuffet-jna.git</connection>
+        <developerConnection>scm:git:ssh://git@codeberg.org/dneuge/framebuffet-jna.git</developerConnection>
+        <url>https://codeberg.org/dneuge/framebuffet-jna</url>
     </scm>
 
     <developers>
