@@ -12,9 +12,9 @@ or [GitHub](https://github.com/dneuge/framebuffet)) for more information.
 
 Official repositories for these bindings are hosted on [Codeberg](https://codeberg.org/dneuge/framebuffet-jna)
 and [GitHub](https://github.com/dneuge/framebuffet-jna). Both locations are kept in sync and can be used to submit pull requests but issues are only tracked
-on [Codeberg](https://codeberg.org/dneuge/framebuffet-jna/issues) to gather them in a single place. Please note that this project uses
-the [same contribution guidelines as Frame Buffet](https://codeberg.org/dneuge/framebuffet/src/branch/main/CONTRIBUTING.md) itself and thus also has the same
-strict "no AI" policy affecting all contributions incl. issue reports.
+on [Codeberg](https://codeberg.org/dneuge/framebuffet-jna/issues) to gather them in a single place.
+Please note that [all contributions](CONTRIBUTING.md) incl. issue reports are subject to a restrictive [AI Usage Policy](AI_USAGE_POLICY.md), similar to Frame
+Buffet itself.
 
 ## Current state
 
@@ -49,8 +49,7 @@ Unless you can comply with the licenses of this project you obviously are not pe
 set. Although it may not be required by those licenses, you are additionally asked to make your AI model publicly
 available under an open license and for free, to play fair and contribute back to the open community you take from.
 
-AI tools are not permitted to be used for contributions to this project. The main reason is that, as of time of writing,
-no tool/model offers traceability nor can today's AI models understand and reason about what they are actually doing.
-Apart from potential copyright/license violations the quality of AI output is doubtful and generally requires more
-effort to be reviewed and cleaned/fixed than actually contributing original work. Contributors will be asked to confirm
-and permanently record compliance with these guidelines.
+For contributions to this project, **AI tools and services may only be used as detailed in the
+[Contribution Guidelines](CONTRIBUTING.md) and separate [AI Usage Policy](AI_USAGE_POLICY.md)**. Contributors will be
+asked to confirm and permanently record compliance with that policy. Violations may lead to immediate and permanent
+removal from this project, depending on severity.
