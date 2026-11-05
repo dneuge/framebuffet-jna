@@ -34,9 +34,9 @@ class NativeCharArrayString {
     /**
      * Reads the content as a string in system encoding, handling size constraint
      * and optional null termination.
-     * 
+     *
      * @return content read in system-encoding; <code>null</code> if pointer is
-     *         <code>null</code>
+     *     <code>null</code>
      */
     String asJavaString() {
         if (pointer == null) {
@@ -71,10 +71,10 @@ class NativeCharArrayString {
      * garbage-collected and eventually double-freed by Java. Make sure the created
      * pointer is actually managed by someone afterwards, otherwise it will leak
      * memory.
-     * 
+     *
      * @param s string to be converted
      * @return converted pointer to a native null-terminated <code>char</code>
-     *         representation compatible with C
+     *     representation compatible with C
      */
     static NativeCharArrayString createDetached(String s) {
         // NOTE: we cannot use Memory as it gets freed on GC causing all sorts of race

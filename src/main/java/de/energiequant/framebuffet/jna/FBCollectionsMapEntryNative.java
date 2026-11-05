@@ -28,10 +28,10 @@ public class FBCollectionsMapEntryNative extends Structure {
         read();
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList(new String[] { "_prev", "_next", "key", "key_size", "value", "value_size" });
+        return Arrays.asList(new String[]{"_prev", "_next", "key", "key_size", "value", "value_size"});
     }
 
     public boolean hasPrev() {

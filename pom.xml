@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>de.energiequant.framebuffet</groupId>
-	<artifactId>framebuffet-jna</artifactId>
-	<name>JNA bindings for Frame Buffet</name>
-	<version>0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.energiequant.framebuffet</groupId>
+    <artifactId>framebuffet-jna</artifactId>
+    <name>JNA bindings for Frame Buffet</name>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
-	<url>https://github.com/dneuge/framebuffet-jna</url>
-	
-	<licenses>
-		<license>
-			<name>MIT</name>
-			<url>https://opensource.org/licenses/MIT</url>
-		</license>
-	</licenses>
-        
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>8</maven.compiler.release>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+    <url>https://github.com/dneuge/framebuffet-jna</url>
 
-		<!-- runtime dependencies -->
-		<jna.version>5.12.1</jna.version>
-	</properties>
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
 
-	<dependencies>
-		<!-- runtime dependencies -->
-		<dependency>
-			<groupId>net.java.dev.jna</groupId>
-			<artifactId>jna</artifactId>
-			<version>${jna.version}</version>
-		</dependency>
-	</dependencies>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
 
-	<scm>
-		<connection>scm:git:git://github.com/dneuge/framebuffet-jna.git</connection>
-		<developerConnection>scm:git:ssh://github.com:dneuge/framebuffet-jna.git</developerConnection>
-		<url>https://github.com/dneuge/framebuffet-jna</url>
-	</scm>
-	
-	<developers>
-		<developer>
-			<name>Daniel Neugebauer</name>
-			<email>dneuge@energiequant.de</email>
-			<url>http://www.energiequant.de/</url>
-		</developer>
-	</developers>
-        
+        <!-- runtime dependencies -->
+        <jna.version>5.12.1</jna.version>
+    </properties>
+
+    <dependencies>
+        <!-- runtime dependencies -->
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>${jna.version}</version>
+        </dependency>
+    </dependencies>
+
+    <scm>
+        <connection>scm:git:git://github.com/dneuge/framebuffet-jna.git</connection>
+        <developerConnection>scm:git:ssh://github.com:dneuge/framebuffet-jna.git</developerConnection>
+        <url>https://github.com/dneuge/framebuffet-jna</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Daniel Neugebauer</name>
+            <email>dneuge@energiequant.de</email>
+            <url>http://www.energiequant.de/</url>
+        </developer>
+    </developers>
+
 </project>

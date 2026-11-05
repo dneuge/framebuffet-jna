@@ -25,10 +25,9 @@ public class FBSourceBufferConfigNative extends Structure {
         // for ByReference
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList(new String[] { "width", "height", "size" });
+        return Arrays.asList(new String[]{"width", "height", "size"});
     }
-
 }

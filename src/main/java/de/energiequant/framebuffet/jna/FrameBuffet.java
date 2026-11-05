@@ -38,7 +38,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     /**
      * Creates a new instance of the framework.
-     * 
+     *
      * @throws InstantiationFailed if the framework failed to initialize
      */
     public FrameBuffet() {
@@ -50,13 +50,13 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     /**
      * Sets the log receiver callback to be used by this framework instance.
-     * 
+     *
      * <p>
      * The receiver should be provided as early as possible as the framework does
      * not perform any logging without a callback. Also remember to set the desired
      * log level {@link #setMinimumLogLevel(FrameBuffetLogLevel)}.
      * </p>
-     * 
+     *
      * <p>
      * If you are not receiving expected messages, check if framework and modules
      * were actually compiled with the wanted log level enabled. For performance
@@ -66,7 +66,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
      * runtime log level is only an additional filter for the messages that were not
      * already optimized away.
      * </p>
-     * 
+     *
      * @param logReceiver will be called for every message not already filtered out
      *                    by the framework
      * @see #setMinimumLogLevel(FrameBuffetLogLevel)
@@ -99,7 +99,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     /**
      * Sets the minimum log message level required to call the log receiver (see
      * {@link #provideLogReceiver(BiConsumer)}).
-     * 
+     *
      * <p>
      * If you are not receiving expected messages, check if framework and modules
      * were actually compiled with the wanted log level enabled. For performance
@@ -109,13 +109,13 @@ public class FrameBuffet implements Closeable, AutoCloseable {
      * runtime log level is only an additional filter for the messages that were not
      * already optimized away.
      * </p>
-     * 
+     *
      * @param logLevel least severe log level to request log output for
      * @see #provideLogReceiver(BiConsumer)
      */
     public void setMinimumLogLevel(FrameBuffetLogLevel logLevel) {
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_set_minimum_log_level(instance, logLevel.getNativeValue()) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_set_minimum_log_level(instance, logLevel.getNativeValue())
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -125,14 +125,14 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     /**
      * Loads a module compiled as a shared library from the given path.
-     * 
+     *
      * @param modulePath path to the shared library to load
      * @throws ModuleLoadFailed if the module could not be loaded
      */
     public void loadModule(File modulePath) {
         String path = modulePath.getAbsolutePath();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_load_module(instance, path) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_load_module(instance, path)
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -143,21 +143,21 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     /**
      * Configures this instance by applying all actions as defined in the given
      * JSON-encoded string.
-     * 
+     *
      * <p>
      * Before configuring, all required modules need to have been registered with
      * the framework instance and logging should have been configured, if wanted.
      * Previous configurations are extended. Create a new {@link FrameBuffet}
      * instance to restart from scratch, if needed.
      * </p>
-     * 
+     *
      * @param json contents of the JSON file to apply
      * @throws ConfigurationFailed if any of the requested actions could not be
      *                             applied
      */
     public void configureFromActionsJson(String json) {
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_configure_from_actions_json(instance, json) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_configure_from_actions_json(instance, json)
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -168,22 +168,22 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     /**
      * Configures this instance by applying all actions as defined in the given JSON
      * file.
-     * 
+     *
      * <p>
      * Before configuring, all required modules need to have been registered with
      * the framework instance and logging should have been configured, if wanted.
      * Previous configurations are extended. Create a new {@link FrameBuffet}
      * instance to restart from scratch, if needed.
      * </p>
-     * 
+     *
      * @param jsonFile the JSON file to be applied
      * @throws ConfigurationFailed if any of the requested actions could not be
      *                             applied
      */
     public void configureFromActionsJson(File jsonFile) {
         String path = jsonFile.getAbsolutePath();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_configure_from_actions_json_file(instance, path) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_configure_from_actions_json_file(instance, path)
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -194,7 +194,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     /**
      * Creates a new instance of the specified module, to be registered under the
      * given name.
-     * 
+     *
      * @param moduleName   module to be instantiated, as registered to the framework
      * @param instanceName name of the instance to be created, as to be registered
      *                     with the framework
@@ -203,14 +203,14 @@ public class FrameBuffet implements Closeable, AutoCloseable {
      */
     public Source createSource(String moduleName, String instanceName) {
         PointerByReference sourceInstanceRef = new PointerByReference();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_create_source_instance(instance, sourceInstanceRef, moduleName, instanceName) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_create_source_instance(instance, sourceInstanceRef, moduleName, instanceName)
         );
 
         if (error != FrameBuffetError.NONE) {
             throw new InstantiationFailed(
-                    "Failed to create source instance \"" + instanceName + "\" of module " + moduleName, //
-                    error //
+                "Failed to create source instance \"" + instanceName + "\" of module " + moduleName,
+                error
             );
         }
 
@@ -219,7 +219,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     /**
      * Retrieves the source module previously registered under the given name.
-     * 
+     *
      * @param instanceName name of the instance to be retrieved
      * @return the framebuffer source instance, empty if not found
      */
@@ -241,8 +241,8 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
         IntByReference numSourcesDestroyed = new IntByReference();
         ByteByReference moduleDestructorFailed = new ByteByReference();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_destroy_retrying(instance, numSourcesDestroyed, -1, new NativeLong(-1), moduleDestructorFailed) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_destroy_retrying(instance, numSourcesDestroyed, -1, new NativeLong(-1), moduleDestructorFailed)
         );
 
         if (error == FrameBuffetError.NONE) {
@@ -251,16 +251,18 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
         if (moduleDestructorFailed.getValue() != 0) {
             throw new ModuleDestructorFailed(
-                    "At least one source instance failed deconstruction. Consequences can be memory leaks "
-                            + "or other unwanted side-effects; the application is advised to terminate "
-                            + "(note that shared memory may still not be freed).",
-                    error);
+                "At least one source instance failed deconstruction. Consequences can be memory leaks "
+                    + "or other unwanted side-effects; the application is advised to terminate "
+                    + "(note that shared memory may still not be freed).",
+                error
+            );
         }
 
         if (error != FrameBuffetError.NONE) {
             throw new FrameBuffetIOException(
-                    "FrameBuffet instance failed to shut down; this can be caused by source instances still being held active",
-                    error);
+                "FrameBuffet instance failed to shut down; this can be caused by source instances still being held active",
+                error
+            );
         }
     }
 
@@ -278,8 +280,8 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     Map<String, String> getSourceConfiguration(Source source) {
         PointerByReference configRef = new PointerByReference();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_get_source_configuration(source.instance, configRef) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_get_source_configuration(source.instance, configRef)
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -297,24 +299,24 @@ public class FrameBuffet implements Closeable, AutoCloseable {
      * Stores the given configuration under the specified name. If a configuration
      * had already been filed under the same name, it will be replaced by the new
      * configuration.
-     * 
+     *
      * <p>
      * Note that this is used for general configurations (usually templates).
      * Sources use their own configurations, set up via
      * {@link Source#configure(Map)}.
      * </p>
-     * 
+     *
      * @param name   name to store the configuration under
      * @param config the configuration to be stored
      */
     public void setConfiguration(String name, Map<String, String> config) {
-        Pointer libConfig = mapToLib(config).orElseThrow( //
-                () -> new IllegalArgumentException(
-                        "Map for \"" + name + "\" could not be converted to FrameBuffet collection") //
-        );
+        Pointer libConfig = mapToLib(config)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Map for \"" + name + "\" could not be converted to FrameBuffet collection"
+            ));
 
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_set_configuration(instance, name, libConfig) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_set_configuration(instance, name, libConfig)
         );
 
         lib.fbcollections_map_free_map_and_payloads(libConfig);
@@ -326,22 +328,22 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     /**
      * Retrieves the configuration stored under the given name.
-     * 
+     *
      * <p>
      * Note that this is used for general configurations (usually templates).
      * Sources use their own configurations, available via
      * {@link Source#getSourceConfiguration()}. Buffer configurations are retrieved
      * via {@link Source#getBufferConfiguration(int)}.
      * </p>
-     * 
+     *
      * @param name name of the stored configuration
      * @return copy of the configuration registered to this framework instance;
-     *         empty if not registered
+     *     empty if not registered
      */
     public Optional<Map<String, String>> getConfiguration(String name) {
         PointerByReference configRef = new PointerByReference();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_get_configuration(instance, name, configRef) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_get_configuration(instance, name, configRef)
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -360,12 +362,11 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     void configureSource(Source source, Map<String, String> config) {
-        Pointer libConfig = mapToLib(config).orElseThrow( //
-                () -> new IllegalArgumentException("Map could not be converted to FrameBuffet collection") //
-        );
+        Pointer libConfig = mapToLib(config)
+            .orElseThrow(() -> new IllegalArgumentException("Map could not be converted to FrameBuffet collection"));
 
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_configure_source_instance(source.instance, libConfig) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_configure_source_instance(source.instance, libConfig)
         );
 
         lib.fbcollections_map_free_map_and_payloads(libConfig);
@@ -377,8 +378,8 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     Optional<BufferConfiguration> getBufferConfiguration(Source source, int id) {
         FBSourceBufferConfigNative.ByReference libConfig = new FBSourceBufferConfigNative.ByReference();
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_get_buffer_configuration(source.instance, id, libConfig) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_get_buffer_configuration(source.instance, id, libConfig)
         );
 
         if (error == FrameBuffetError.NO_SUCH_BUFFER) {
@@ -395,14 +396,14 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     int copyLatestFrame(Source source, byte[] destination, int bufferId) {
         IntByReference libToken = new IntByReference();
 
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_copy_latest_frame( //
-                        source.instance, //
-                        destination, //
-                        new NativeLong(destination.length, true), //
-                        bufferId, //
-                        libToken.getPointer() //
-                ) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_copy_latest_frame(
+                source.instance,
+                destination,
+                new NativeLong(destination.length, true),
+                bufferId,
+                libToken.getPointer()
+            )
         );
 
         if (error != FrameBuffetError.NONE) {
@@ -423,15 +424,17 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     boolean waitForUpdate(Source source, int bufferId, int lastToken, Duration timeout) {
-        int result = lib.framebuffet_wait_for_update_micros(source.instance, bufferId, lastToken,
-                (int) (timeout.toMillis() * 1000);
+        int result = lib.framebuffet_wait_for_update_micros(
+            source.instance, bufferId, lastToken,
+            (int) (timeout.toMillis() * 1000)
+        );
 
         return convertWaitForUpdateResult(result);
     }
 
     void releaseSourceInstance(Source source) {
-        FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_release_source_instance(source.instance) //
+        FrameBuffetError error = FrameBuffetError.resolve(
+            lib.framebuffet_release_source_instance(source.instance)
         );
 
         if (error != FrameBuffetError.NONE && error != FrameBuffetError.DESTRUCTION_PENDING) {
@@ -442,18 +445,16 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     private boolean convertWaitForUpdateResult(int result) {
         FrameBuffetError error = FrameBuffetError.resolve(result);
 
-        // @formatter:off
         switch (error) {
             case NONE:
                 return true;
-    
+
             case NO_FRAME:
                 return false;
-    
+
             default:
                 throw new ModuleFailed("Failed waiting for an update from source", error);
         }
-        // @formatter:on
     }
 
     /**
@@ -461,7 +462,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
      * null-terminated strings. All memory is supposed to be managed by the
      * framework upon success, thus requiring "detached" copies of all entry keys
      * and values; i.e. JNA is not allowed to manage them.
-     * 
+     *
      * @param javaMap map to be converted
      * @return a pointer to the converted and detached map; empty if creation failed
      */
@@ -476,12 +477,12 @@ public class FrameBuffet implements Closeable, AutoCloseable {
             NativeCharArrayString libValue = NativeCharArrayString.createDetached(javaEntry.getValue());
 
             // FIXME: sizes need to be recoded to unsigned long
-            int error = lib.fbcollections_map_put_and_free_old_entry_with_payloads( //
-                    libMap, //
-                    libKey.pointer, //
-                    new NativeLong(libKey.size, true), //
-                    libValue.pointer, //
-                    new NativeLong(libValue.size, true) //
+            int error = lib.fbcollections_map_put_and_free_old_entry_with_payloads(
+                libMap,
+                libKey.pointer,
+                new NativeLong(libKey.size, true),
+                libValue.pointer,
+                new NativeLong(libValue.size, true)
             );
 
             if (error < 0) {
@@ -502,7 +503,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     /**
      * Reads the whole content of a framebuffet collections library map to Java,
      * assuming keys and values are both null-terminated strings.
-     * 
+     *
      * @param libMap any entry of the map to be converted
      * @return converted map
      */

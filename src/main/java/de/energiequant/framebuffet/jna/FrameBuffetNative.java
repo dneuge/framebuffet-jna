@@ -29,7 +29,7 @@ public interface FrameBuffetNative extends Library {
     byte framebuffet_destroy(Pointer framebuffet, IntByReference num_sources_destroyed);
 
     byte framebuffet_destroy_retrying(Pointer framebuffet, IntByReference num_sources_destroyed, int maximum_attempts,
-            NativeLong millis_between_attempts, ByteByReference module_destructor_failed);
+                                      NativeLong millis_between_attempts, ByteByReference module_destructor_failed);
 
     void framebuffet_provide_log_receiver(Pointer framebuffet, LogReceiverNative log_receiver);
 
@@ -46,7 +46,7 @@ public interface FrameBuffetNative extends Library {
     byte framebuffet_get_configuration(Pointer framebuffet, String config_name, PointerByReference config);
 
     byte framebuffet_create_source_instance(Pointer framebuffet, PointerByReference source_instance, String module_name,
-            String instance_name);
+                                            String instance_name);
 
     byte framebuffet_configure_source_instance(Pointer source_instance, Pointer config);
 
@@ -65,10 +65,10 @@ public interface FrameBuffetNative extends Library {
     int framebuffet_get_num_buffers(Pointer source_instance);
 
     byte framebuffet_get_buffer_configuration(Pointer source_instance, int buffer_id,
-            FBSourceBufferConfigNative.ByReference buffer_config);
+                                              FBSourceBufferConfigNative.ByReference buffer_config);
 
     byte framebuffet_copy_latest_frame(Pointer source_instance, byte[] destination, NativeLong buffer_size, int buffer_id,
-            Pointer token);
+                                       Pointer token);
 
     boolean framebuffet_has_update(Pointer source_instance, int buffer_id, int last_token);
 
@@ -79,14 +79,13 @@ public interface FrameBuffetNative extends Library {
     Pointer fbcollections_map_create();
 
     int fbcollections_map_put(Pointer entry, PointerByReference old_entry, Pointer key, NativeLong key_size, Pointer value,
-            NativeLong value_size);
+                              NativeLong value_size);
 
     int fbcollections_map_put_and_free_old_entry_with_payloads(Pointer entry, Pointer key, NativeLong key_size, Pointer value,
-            NativeLong value_size);
+                                                               NativeLong value_size);
 
     void fbcollections_map_free_map_and_payloads(Pointer entry);
 
-    // @formatter:off
     // not bound yet:
     // fberror_t framebuffet_register_module(framebuffet_t *framebuffet, fbsource_module_descriptor_t module_descriptor);
     //
@@ -96,6 +95,4 @@ public interface FrameBuffetNative extends Library {
     // fbcollections_map_entry_t* fbcollections_map_remove(fbcollections_map_entry_t *entry, void *key, unsigned long key_size);
     // void fbcollections_map_free_entry_and_payloads(fbcollections_map_entry_t *entry);
     // fbcollections_map_entry_t* fbcollections_map_tail(fbcollections_map_entry_t *entry);
-    //
-    // @formatter:on
 }

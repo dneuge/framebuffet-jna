@@ -31,7 +31,7 @@ public class Source implements Closeable, AutoCloseable {
 
     /**
      * @return number of buffers currently available from the source instance; may
-     *         be <code>0</code>
+     *     be <code>0</code>
      * @throws ModuleFailed if unable to provide any indication
      */
     public int getNumBuffers() {
@@ -53,7 +53,7 @@ public class Source implements Closeable, AutoCloseable {
      * Configuration may be applied asynchronously by the module and thus not take
      * immediate affect upon return.
      * </p>
-     * 
+     *
      * @param config parameters to be configured; may be empty
      * @throws ModuleFailed if configuration failed
      */
@@ -68,10 +68,10 @@ public class Source implements Closeable, AutoCloseable {
      * This is the equivalent to {@link #configure(Map)}. For actual buffer
      * parameters call {@link #getBufferConfiguration(int)}.
      * </p>
-     * 
+     *
      * @return current configuration of source instance; may be empty
-     * @see #getBufferConfiguration(int)
      * @throws ModuleFailed if the instance failed to provide any configuration
+     * @see #getBufferConfiguration(int)
      */
     public Map<String, String> getSourceConfiguration() {
         failIfReleased();
@@ -88,7 +88,7 @@ public class Source implements Closeable, AutoCloseable {
      * configuration although the buffer is within the range indicated by
      * {@link #getNumBuffers()}.
      * </p>
-     * 
+     *
      * @param id zero-based index of the buffer to access
      * @return configuration of the buffer; empty if unavailable
      */
@@ -100,13 +100,13 @@ public class Source implements Closeable, AutoCloseable {
     /**
      * Copies the latest complete frame from the specified buffer to the given byte
      * array.
-     * 
+     *
      * <p>
      * Note that buffers are not required to always exist, e.g. during source
      * initialization. It is possible that copying fails although the buffer is
      * within the range indicated by {@link #getNumBuffers()}.
      * </p>
-     * 
+     *
      * <p>
      * For performance reasons, you will probably want to check via
      * {@link #hasUpdate(int, int)} if an update to a previously copied buffer would
@@ -115,7 +115,7 @@ public class Source implements Closeable, AutoCloseable {
      * Tokens have no specified meaning and should not be interpreted or manipulated
      * further.
      * </p>
-     * 
+     *
      * @param destination byte array to copy into; must fit the whole image (check
      *                    {@link BufferConfiguration#getSize()}}
      * @param bufferId    zero-based index of the buffer to copy from
@@ -129,23 +129,23 @@ public class Source implements Closeable, AutoCloseable {
 
     /**
      * Checks if an updated frame is available for the given buffer.
-     * 
+     *
      * <p>
      * Tokens are returned from {@link #copyLatestFrame(byte[], int)} and have no
      * specified meaning.
      * </p>
-     * 
+     *
      * <p>
      * Note that modules are not required to support token-based update checks. Some
      * modules may always return <code>true</code>, so an additional rate limit may
      * be useful to avoid excessive calls to {@link #copyLatestFrame(byte[], int)}.
      * </p>
-     * 
+     *
      * @param bufferId  zero-based index of the buffer to check
      * @param lastToken token received from last
      *                  {@link #copyLatestFrame(byte[], int)} call
      * @return <code>false</code> if the buffer does not have an updated image ready
-     *         for copy, otherwise <code>true</code>
+     *     for copy, otherwise <code>true</code>
      */
     public boolean hasUpdate(int bufferId, int lastToken) {
         failIfReleased();
@@ -154,28 +154,28 @@ public class Source implements Closeable, AutoCloseable {
 
     /**
      * Waits indefinitely until an updated frame is available for the given buffer.
-     * 
+     *
      * <p>
      * Tokens are returned from {@link #copyLatestFrame(byte[], int)} and have no
      * specified meaning.
      * </p>
-     * 
+     *
      * <p>
      * Note that modules are not required to support token-based update checks. This
      * call may block "forever" in such cases.
      * </p>
-     * 
+     *
      * <p>
      * Waiting can only be interrupted by the framework. You probably want to
      * specify a timeout to unblock the calling thread at some point, see
      * {@link #waitForUpdate(int, int, Duration)}.
      * </p>
-     * 
+     *
      * @param bufferId  zero-based index of the buffer to check
      * @param lastToken token received from last
      *                  {@link #copyLatestFrame(byte[], int)} call
      * @return <code>false</code> if the buffer does not have an updated image ready
-     *         for copy, otherwise <code>true</code>
+     *     for copy, otherwise <code>true</code>
      */
     public boolean waitForUpdate(int bufferId, int lastToken) {
         failIfReleased();
@@ -185,23 +185,23 @@ public class Source implements Closeable, AutoCloseable {
     /**
      * Waits until an updated frame is available for the given buffer or the timeout
      * has expired.
-     * 
+     *
      * <p>
      * Tokens are returned from {@link #copyLatestFrame(byte[], int)} and have no
      * specified meaning.
      * </p>
-     * 
+     *
      * <p>
      * Note that modules are not required to support token-based update checks. This
      * call will just timeout in that case.
      * </p>
-     * 
+     *
      * @param bufferId  zero-based index of the buffer to check
      * @param lastToken token received from last
      *                  {@link #copyLatestFrame(byte[], int)} call
      * @param timeout   maximum time to block the calling thread
      * @return <code>false</code> if the buffer does not have an updated image ready
-     *         for copy, otherwise <code>true</code>
+     *     for copy, otherwise <code>true</code>
      */
     public boolean waitForUpdate(int bufferId, int lastToken, Duration timeout) {
         failIfReleased();
