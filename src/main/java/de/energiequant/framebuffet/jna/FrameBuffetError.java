@@ -78,6 +78,10 @@ public enum FrameBuffetError {
         this.code = code;
     }
 
+    static FrameBuffetError resolve(byte code) {
+        return resolve(code >= 0 ? code : code + 256);
+    }
+
     static FrameBuffetError resolve(int code) {
         FrameBuffetError error = BY_CODE.get(code);
         if (error != null) {

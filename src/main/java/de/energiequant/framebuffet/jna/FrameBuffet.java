@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -241,7 +242,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
         IntByReference numSourcesDestroyed = new IntByReference();
         ByteByReference moduleDestructorFailed = new ByteByReference();
         FrameBuffetError error = FrameBuffetError.resolve( //
-                lib.framebuffet_destroy_retrying(instance, numSourcesDestroyed, -1, -1, moduleDestructorFailed) //
+                lib.framebuffet_destroy_retrying(instance, numSourcesDestroyed, -1, new NativeLong(-1), moduleDestructorFailed) //
         );
 
         if (error == FrameBuffetError.NONE) {
@@ -398,7 +399,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
                 lib.framebuffet_copy_latest_frame( //
                         source.instance, //
                         destination, //
-                        destination.length, //
+                        new NativeLong(destination.length, true), //
                         bufferId, //
                         libToken.getPointer() //
                 ) //
@@ -412,7 +413,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
     }
 
     boolean hasUpdate(Source source, int bufferId, int lastToken) {
-        return lib.framebuffet_has_update(source.instance, bufferId, lastToken) != 0;
+        return lib.framebuffet_has_update(source.instance, bufferId, lastToken);
     }
 
     boolean waitForUpdate(Source source, int bufferId, int lastToken) {
@@ -423,7 +424,7 @@ public class FrameBuffet implements Closeable, AutoCloseable {
 
     boolean waitForUpdate(Source source, int bufferId, int lastToken, Duration timeout) {
         int result = lib.framebuffet_wait_for_update_micros(source.instance, bufferId, lastToken,
-                timeout.toMillis() * 1000);
+                (int) (timeout.toMillis() * 1000);
 
         return convertWaitForUpdateResult(result);
     }
@@ -478,9 +479,9 @@ public class FrameBuffet implements Closeable, AutoCloseable {
             int error = lib.fbcollections_map_put_and_free_old_entry_with_payloads( //
                     libMap, //
                     libKey.pointer, //
-                    libKey.size, //
+                    new NativeLong(libKey.size, true), //
                     libValue.pointer, //
-                    libValue.size //
+                    new NativeLong(libValue.size, true) //
             );
 
             if (error < 0) {
